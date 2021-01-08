@@ -3,22 +3,14 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="row">
+    <h1>{{$user->name}}</h1>
+  </div>
 </div>
+@if ($user->owner == 1)
+  <div id="admin"></div>
+@endif
+@if ($user->owner == 0)  
+  <div id="user"></div>    
+@endif  
 @endsection
