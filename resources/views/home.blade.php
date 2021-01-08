@@ -11,6 +11,6 @@
   <div id="admin"></div>
 @endif
 @if ($user->owner == 0)  
-  <div id="user"></div>    
+  <div id="userContainer"></div>    
 @endif  
 @endsection
