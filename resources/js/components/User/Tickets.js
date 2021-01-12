@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
-import Container from './Container'
+import Container from '../Container'
 import api from '../../requests'
 
 function Tickets() {
@@ -41,8 +41,9 @@ function Tickets() {
               <td>{index+1}</td>
               <td>{ticket.theme}</td>
               <td>{ticket.message}</td>
+              <td>{ticket.response}</td>
             </tr>
-          ))
+        ))
     }
     return (
         <Container title="Tickets">
@@ -52,8 +53,9 @@ function Tickets() {
                 <thead>
                     <tr>
                         <th>ID.</th>
+                        <th>Theme</th>
                         <th>Message</th>
-                        <th>Answer</th>
+                        <th>Response</th>
                     </tr>
                 </thead>
                 <tbody>

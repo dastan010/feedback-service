@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +14,14 @@ use App\Http\Controllers\TicketController;
 |
 */
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('user');
+Route::get('/admin', function(){
+  return view('admin');
+})->name('admin');
+Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'index']);
+Route::get('/admin/users/getTickets/{id}', [App\Http\Controllers\AdminController::class, 'getUserTickets']);
+Route::put('/admin/users/ticketResponse/{id}', [App\Http\Controllers\AdminController::class, 'update']);
+
 Route::get('/add', [App\Http\Controllers\HomeController::class, 'index']);
 Route::resource('/tickets', TicketController::class);
 Auth::routes();

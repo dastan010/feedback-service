@@ -13,3 +13,4 @@ require('./bootstrap');
  */
 
 require('./components/User/UserContainer');
+require('./components/Admin/AdminContainer');
