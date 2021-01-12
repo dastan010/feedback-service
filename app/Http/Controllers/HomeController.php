@@ -28,7 +28,7 @@ class HomeController extends Controller
         if (!$user) {
             return view('auth.login');
         } else {
-            return view('home', ['user' => $user]);
+            return view('user', ['user' => $user]);
         }
     } 
 }
