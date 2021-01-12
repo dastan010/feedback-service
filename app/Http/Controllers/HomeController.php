@@ -11,6 +11,7 @@ class HomeController extends Controller
      *
      * @return void
      */
+    
     public function __construct()
     {
         $this->middleware('auth');
@@ -21,13 +22,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
+
+    public function index() {
         $user = Auth::user();
-        if ($user->owner == 0) {
-            return view('home');
+        if (!$user) {
+            return view('auth.login');
         } else {
-            die('You are admin!');
+            return view('user', ['user' => $user]);
         }
-    }
+    } 
 }
