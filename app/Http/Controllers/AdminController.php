@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Storage;
+use Response;
 
 class AdminController extends Controller
 {
@@ -42,6 +44,17 @@ class AdminController extends Controller
         return response()->json([
           'userTickets' => $userTickets
         ]);
+    }
+    public function downloadFile() {
+        $file = public_path().'/storage/attachedFiles/user/3/ticket/49/file_49.pdf';
+        $headers = array(
+            'Content-Type: application/pdf'
+        );
+
+        return response()->download($file,'file_39.pdf', $headers);
+        // return response()->json([
+        //     'path' => public_path()
+        // ]);
     }
 
     /**

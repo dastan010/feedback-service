@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Ticket as TicketResource;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Auth;
 
 class TicketController extends Controller
@@ -45,10 +46,21 @@ class TicketController extends Controller
                 'user_id' => Auth::user()->id
             ]);
             $ticket->save();
-            return response()->json([
-                'data' => 'Ticket created!'
-            ]);
+            $path = 'public/attachedFiles/user/' . Auth::user()->id . '/ticket/' . $ticket->id;
+            Storage::putFileAs($path, 
+                               $request->file('attachedFile'),
+                               'file_'.$ticket->id.'.'.$request->file('attachedFile')->getClientOriginalExtension(), 'public');
+            $tickets = DB::table('tickets')
+                ->where('id', $ticket->id)
+                ->where('user_id', Auth::user()->id)
+                ->update(['file_path' => $path]);
         }
+
+        return response()->json([
+            'theme' => $request->theme,
+            'message' => $request->message,
+            'path' => $path
+        ]);
     }
 
     /**

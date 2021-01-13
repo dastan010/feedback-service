@@ -2118,6 +2118,17 @@ function AdminContainer() {
     renderUserTickets();
   };
 
+  var downloadFile = function downloadFile() {
+    _requests__WEBPACK_IMPORTED_MODULE_2__.default.downloadFile().then(function (res) {
+      console.log(res.data); // const url = window.URL.createObjectURL(new Blob([res.data]));
+      // const link = document.createElement('a');
+      // link.href = url;
+      // link.setAttribute('download', 'file.pdf'); //or any other extension
+      // document.body.appendChild(link);
+      // link.click();
+    });
+  };
+
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Container__WEBPACK_IMPORTED_MODULE_3__.default, {
     title: "Admin"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Modal__WEBPACK_IMPORTED_MODULE_4__.default, {
@@ -2136,7 +2147,10 @@ function AdminContainer() {
     id: "inputGroupSelect01"
   }, renderUsers())), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("table", {
     className: "table table-striped mt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "ID."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Theme"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Message"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Response"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Mail"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Creation Time"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Actions"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, renderUserTickets())));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "ID."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Theme"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Message"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Response"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Mail"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Creation Time"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Actions"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, renderUserTickets(), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    className: "btn btn-primary",
+    onClick: downloadFile
+  }, "Download"))))));
 }
 
 document.getElementById('adminContainer') ? react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(AdminContainer, null), document.getElementById('adminContainer')) : console.log('The node isn\'t provided!');
@@ -2366,45 +2380,51 @@ function AddTicket() {
       _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(''),
       _useState6 = _slicedToArray(_useState5, 2),
       message = _useState6[0],
-      setMessage = _useState6[1];
+      setMessage = _useState6[1],
+      _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(null),
+      _useState8 = _slicedToArray(_useState7, 2),
+      file = _useState8[0],
+      setFile = _useState8[1];
 
   var onAddSubmit = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+      var formData;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               setLoading(true);
               _context.prev = 1;
-              _context.next = 4;
-              return _requests__WEBPACK_IMPORTED_MODULE_3__.default.createTicket({
-                theme: theme,
-                message: message
+              formData = new FormData();
+              formData.append('attachedFile', file);
+              formData.append('theme', theme);
+              formData.append('message', message);
+              _context.next = 8;
+              return _requests__WEBPACK_IMPORTED_MODULE_3__.default.createTicket(formData).then(function (res) {
+                console.log(res.data);
               });
 
-            case 4:
-              _context.next = 9;
+            case 8:
+              _context.next = 13;
               break;
 
-            case 6:
-              _context.prev = 6;
+            case 10:
+              _context.prev = 10;
               _context.t0 = _context["catch"](1);
               alert('Failed to add Ticket!');
 
-            case 9:
-              _context.prev = 9;
-              setLoading(false);
-              setTimeout(function () {
-                return history.push('/');
-              }, 500);
-              return _context.finish(9);
-
             case 13:
+              _context.prev = 13;
+              setLoading(false); // setTimeout(() => history.push('/'), 500)
+
+              return _context.finish(13);
+
+            case 16:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[1, 6, 9, 13]]);
+      }, _callee, null, [[1, 10, 13, 16]]);
     }));
 
     return function onAddSubmit() {
@@ -2412,13 +2432,18 @@ function AddTicket() {
     };
   }();
 
+  var onFileChange = function onFileChange(event) {
+    setFile(event.target.files[0]);
+  };
+
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(_Container__WEBPACK_IMPORTED_MODULE_2__.default, {
     title: "Add Ticket"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/",
     className: "btn btn-primary"
   }, "Back"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("form", {
-    className: "mt-4"
+    className: "mt-4",
+    encType: "multipart/form-data"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", null, "Theme:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
@@ -2439,6 +2464,12 @@ function AddTicket() {
     onChange: function onChange(e) {
       return setMessage(e.target.value);
     }
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
+    id: "file",
+    type: "file",
+    onChange: onFileChange
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
@@ -2601,8 +2632,12 @@ var BASE_API_URL = 'http://localhost:8000',
   getAllTickets: function getAllTickets() {
     return axios.get("".concat(BASE_API_URL, "/tickets"));
   },
-  createTicket: function createTicket(ticket) {
-    return axios.post("".concat(BASE_API_URL, "/tickets"), ticket);
+  createTicket: function createTicket(formData) {
+    return axios.post("".concat(BASE_API_URL, "/tickets"), formData);
+  },
+  downloadFile: function downloadFile() {
+    return axios.get("".concat(ADMIN_BASE_API_URL, "/users/fileDownload"), {// responseType: 'blob'
+    });
   }
 });
 

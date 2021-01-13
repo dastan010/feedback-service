@@ -97,6 +97,18 @@ function AdminContainer() {
     fetchUserTickets(id)
     renderUserTickets()
   }
+
+  const downloadFile = () => {
+    api.downloadFile().then(res => {
+      console.log(res.data);
+      // const url = window.URL.createObjectURL(new Blob([res.data]));
+      // const link = document.createElement('a');
+      // link.href = url;
+      // link.setAttribute('download', 'file.pdf'); //or any other extension
+      // document.body.appendChild(link);
+      // link.click();
+    })
+  }
   
   return (
     <Container title="Admin">
@@ -124,6 +136,13 @@ function AdminContainer() {
         </thead>
         <tbody>
           {renderUserTickets()}
+          <tr>
+            <td>
+              <button className="btn btn-primary" onClick={downloadFile}>
+                Download
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </Container>
