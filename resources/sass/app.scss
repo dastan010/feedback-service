@@ -6,3 +6,19 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+
+.hidden {
+  display: none;
+}
+
+.banner {
+  padding: 5px;
+  width: 400px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.customBadge {
+  font-size: 14px;
+}

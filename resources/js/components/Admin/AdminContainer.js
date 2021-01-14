@@ -19,6 +19,7 @@ function AdminContainer() {
 
   const fetchUserTickets = id => {
     api.getUserTickets(id).then(res => {
+      console.log('From userTickets', res.data.userTickets);
       setUserTickets(res.data.userTickets)
     })
   }
@@ -85,6 +86,13 @@ function AdminContainer() {
             onClick={() => {setPropTicket([ticket.user_id, ticket.id, ticket.response])}}
           >{ticket.response ? 'Редактировать ответ' : 'Ответить'}</button>
         </td>
+        <td>
+          <button 
+            className={`btn btn-primary ${ticket.file_path ? '' : 'hidden'}`}
+            onClick={() => {downloadFile(ticket.id, ticket.user_id)}}
+          >Загрузить</button>
+          <span className={`badge badge-warning customBadge ${ticket.file_path ? 'hidden' : ''}`}>Без файла</span>
+        </td>
       </tr>
     ))
   }
@@ -98,15 +106,14 @@ function AdminContainer() {
     renderUserTickets()
   }
 
-  const downloadFile = () => {
-    api.downloadFile().then(res => {
-      console.log(res.data);
-      // const url = window.URL.createObjectURL(new Blob([res.data]));
-      // const link = document.createElement('a');
-      // link.href = url;
-      // link.setAttribute('download', 'file.pdf'); //or any other extension
-      // document.body.appendChild(link);
-      // link.click();
+  const downloadFile = (ticket_id, user_id) => {
+    api.downloadFile(ticket_id, user_id).then(res => {
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file.docx'); 
+      document.body.appendChild(link);
+      link.click();
     })
   }
   
@@ -132,17 +139,11 @@ function AdminContainer() {
             <th>Mail</th>
             <th>Creation Time</th>
             <th>Actions</th>
+            <th>Файл</th>
           </tr>
         </thead>
         <tbody>
           {renderUserTickets()}
-          <tr>
-            <td>
-              <button className="btn btn-primary" onClick={downloadFile}>
-                Download
-              </button>
-            </td>
-          </tr>
         </tbody>
       </table>
     </Container>

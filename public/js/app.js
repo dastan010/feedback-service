@@ -2057,6 +2057,7 @@ function AdminContainer() {
 
   var fetchUserTickets = function fetchUserTickets(id) {
     _requests__WEBPACK_IMPORTED_MODULE_2__.default.getUserTickets(id).then(function (res) {
+      console.log('From userTickets', res.data.userTickets);
       setUserTickets(res.data.userTickets);
     });
   };
@@ -2105,7 +2106,14 @@ function AdminContainer() {
         onClick: function onClick() {
           setPropTicket([ticket.user_id, ticket.id, ticket.response]);
         }
-      }, ticket.response ? 'Редактировать ответ' : 'Ответить')));
+      }, ticket.response ? 'Редактировать ответ' : 'Ответить')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+        className: "btn btn-primary ".concat(ticket.file_path ? '' : 'hidden'),
+        onClick: function onClick() {
+          downloadFile(ticket.id, ticket.user_id);
+        }
+      }, "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+        className: "badge badge-warning customBadge ".concat(ticket.file_path ? 'hidden' : '')
+      }, "\u0411\u0435\u0437 \u0444\u0430\u0439\u043B\u0430")));
     });
   };
 
@@ -2118,14 +2126,14 @@ function AdminContainer() {
     renderUserTickets();
   };
 
-  var downloadFile = function downloadFile() {
-    _requests__WEBPACK_IMPORTED_MODULE_2__.default.downloadFile().then(function (res) {
-      console.log(res.data); // const url = window.URL.createObjectURL(new Blob([res.data]));
-      // const link = document.createElement('a');
-      // link.href = url;
-      // link.setAttribute('download', 'file.pdf'); //or any other extension
-      // document.body.appendChild(link);
-      // link.click();
+  var downloadFile = function downloadFile(ticket_id, user_id) {
+    _requests__WEBPACK_IMPORTED_MODULE_2__.default.downloadFile(ticket_id, user_id).then(function (res) {
+      var url = window.URL.createObjectURL(new Blob([res.data]));
+      var link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file.docx');
+      document.body.appendChild(link);
+      link.click();
     });
   };
 
@@ -2147,10 +2155,7 @@ function AdminContainer() {
     id: "inputGroupSelect01"
   }, renderUsers())), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("table", {
     className: "table table-striped mt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "ID."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Theme"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Message"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Response"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Mail"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Creation Time"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Actions"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, renderUserTickets(), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    className: "btn btn-primary",
-    onClick: downloadFile
-  }, "Download"))))));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "ID."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Theme"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Message"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Response"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Mail"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Creation Time"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Actions"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "\u0424\u0430\u0439\u043B"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, renderUserTickets())));
 }
 
 document.getElementById('adminContainer') ? react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(AdminContainer, null), document.getElementById('adminContainer')) : console.log('The node isn\'t provided!');
@@ -2384,7 +2389,11 @@ function AddTicket() {
       _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(null),
       _useState8 = _slicedToArray(_useState7, 2),
       file = _useState8[0],
-      setFile = _useState8[1];
+      setFile = _useState8[1],
+      _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(''),
+      _useState10 = _slicedToArray(_useState9, 2),
+      dataNotification = _useState10[0],
+      setDataNotification = _useState10[1];
 
   var onAddSubmit = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -2401,7 +2410,7 @@ function AddTicket() {
               formData.append('message', message);
               _context.next = 8;
               return _requests__WEBPACK_IMPORTED_MODULE_3__.default.createTicket(formData).then(function (res) {
-                console.log(res.data);
+                res.data.alert ? setDataNotification(res.data.alert) : setDataNotification(res.data.success);
               });
 
             case 8:
@@ -2415,16 +2424,18 @@ function AddTicket() {
 
             case 13:
               _context.prev = 13;
-              setLoading(false); // setTimeout(() => history.push('/'), 500)
-
+              setLoading(false);
+              setTimeout(function () {
+                return history.push('/');
+              }, 1000);
               return _context.finish(13);
 
-            case 16:
+            case 17:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[1, 10, 13, 16]]);
+      }, _callee, null, [[1, 10, 13, 17]]);
     }));
 
     return function onAddSubmit() {
@@ -2432,8 +2443,20 @@ function AddTicket() {
     };
   }();
 
+  function Notification(props) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+      className: "banner bg-warning ".concat(props.data ? '' : 'hidden')
+    }, props.data);
+  }
+
   var onFileChange = function onFileChange(event) {
     setFile(event.target.files[0]);
+    var extension = event.target.files[0].name.split('.').pop();
+
+    if (extension !== 'docx') {
+      alert('Файл должен быть формата docx!');
+      document.getElementById('file').value = '';
+    }
   };
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(_Container__WEBPACK_IMPORTED_MODULE_2__.default, {
@@ -2441,7 +2464,9 @@ function AddTicket() {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/",
     className: "btn btn-primary"
-  }, "Back"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("form", {
+  }, "Back"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(Notification, {
+    data: dataNotification
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("form", {
     className: "mt-4",
     encType: "multipart/form-data"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
@@ -2635,8 +2660,9 @@ var BASE_API_URL = 'http://localhost:8000',
   createTicket: function createTicket(formData) {
     return axios.post("".concat(BASE_API_URL, "/tickets"), formData);
   },
-  downloadFile: function downloadFile() {
-    return axios.get("".concat(ADMIN_BASE_API_URL, "/users/fileDownload"), {// responseType: 'blob'
+  downloadFile: function downloadFile(ticket_id, user_id) {
+    return axios.get("".concat(ADMIN_BASE_API_URL, "/users/").concat(user_id, "/tickets/").concat(ticket_id, "/fileDownload"), {
+      responseType: 'blob'
     });
   }
 });

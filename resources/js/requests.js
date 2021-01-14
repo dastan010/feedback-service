@@ -12,8 +12,8 @@ export default {
     axios.get(`${BASE_API_URL}/tickets`),
   createTicket: formData =>
     axios.post(`${BASE_API_URL}/tickets`, formData),
-  downloadFile: () =>
-    axios.get(`${ADMIN_BASE_API_URL}/users/fileDownload`, {
-      // responseType: 'blob'
+  downloadFile: (ticket_id, user_id) =>
+    axios.get(`${ADMIN_BASE_API_URL}/users/${user_id}/tickets/${ticket_id}/fileDownload`, {
+      responseType: 'blob'
     })  
 }

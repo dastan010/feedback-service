@@ -21,7 +21,7 @@ Route::get('/admin', function(){
 })->name('admin');
 Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'index']);
 Route::get('/admin/users/getTickets/{id}', [App\Http\Controllers\AdminController::class, 'getUserTickets']);
-Route::get('/admin/users/fileDownload', [App\Http\Controllers\AdminController::class, 'downloadFile']);
+Route::get('/admin/users/{user_id}/tickets/{ticket_id}/fileDownload', [App\Http\Controllers\AdminController::class, 'downloadFile']);
 Route::put('/admin/users/ticketResponse/{id}', [App\Http\Controllers\AdminController::class, 'update']);
 
 Route::get('/add', [App\Http\Controllers\HomeController::class, 'index']);

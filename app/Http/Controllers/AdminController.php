@@ -36,6 +36,7 @@ class AdminController extends Controller
                      'users.name',
                      'tickets.theme',
                      'users.email',
+                     'tickets.file_path',
                      'tickets.message', 
                      'tickets.response',
                      'tickets.created_at'
@@ -45,16 +46,19 @@ class AdminController extends Controller
           'userTickets' => $userTickets
         ]);
     }
-    public function downloadFile() {
-        $file = public_path().'/storage/attachedFiles/user/3/ticket/49/file_49.pdf';
+    public function downloadFile($user_id, $ticket_id) {
+        $db_file_path = DB::table('tickets')
+            ->select('file_path')
+            ->where('id', $ticket_id)
+            ->where('user_id', $user_id)
+            ->first();
+        
+        $fileName = 'file_'.$ticket_id.'.docx';    
+        $filePath = public_path().'/storage/'.$db_file_path->file_path.'/'.$fileName;
         $headers = array(
-            'Content-Type: application/pdf'
+            'Content-Type: application/docx'
         );
-
-        return response()->download($file,'file_39.pdf', $headers);
-        // return response()->json([
-        //     'path' => public_path()
-        // ]);
+        return response()->download($filePath, $fileName, $headers);
     }
 
     /**
