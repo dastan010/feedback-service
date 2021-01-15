@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Storage;
+use Response;
 
 class AdminController extends Controller
 {
@@ -34,6 +36,7 @@ class AdminController extends Controller
                      'users.name',
                      'tickets.theme',
                      'users.email',
+                     'tickets.file_path',
                      'tickets.message', 
                      'tickets.response',
                      'tickets.created_at'
@@ -42,6 +45,20 @@ class AdminController extends Controller
         return response()->json([
           'userTickets' => $userTickets
         ]);
+    }
+    public function downloadFile($user_id, $ticket_id) {
+        $db_file_path = DB::table('tickets')
+            ->select('file_path')
+            ->where('id', $ticket_id)
+            ->where('user_id', $user_id)
+            ->first();
+        
+        $fileName = 'file_'.$ticket_id.'.docx';    
+        $filePath = public_path().'/storage/'.$db_file_path->file_path.'/'.$fileName;
+        $headers = array(
+            'Content-Type: application/docx'
+        );
+        return response()->download($filePath, $fileName, $headers);
     }
 
     /**

@@ -10,6 +10,10 @@ export default {
     axios.put(`${ADMIN_BASE_API_URL}/users/ticketResponse/${ticket_id}`, data),
   getAllTickets: () =>
     axios.get(`${BASE_API_URL}/tickets`),
-  createTicket: (ticket) =>
-    axios.post(`${BASE_API_URL}/tickets`, ticket)  
+  createTicket: formData =>
+    axios.post(`${BASE_API_URL}/tickets`, formData),
+  downloadFile: (ticket_id, user_id) =>
+    axios.get(`${ADMIN_BASE_API_URL}/users/${user_id}/tickets/${ticket_id}/fileDownload`, {
+      responseType: 'blob'
+    })  
 }

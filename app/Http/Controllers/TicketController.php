@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Ticket as TicketResource;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use Auth;
 
 class TicketController extends Controller
@@ -35,19 +37,44 @@ class TicketController extends Controller
     {
         $user = Auth::user();
         if ($user->owner == 0) {
-            $request->validate([
-                'theme' => 'required',
-                'message' => 'required'
-            ]);
-            $ticket = new Ticket([
-                'theme' => $request->theme,
-                'message' => $request->message,
-                'user_id' => Auth::user()->id
-            ]);
-            $ticket->save();
-            return response()->json([
-                'data' => 'Ticket created!'
-            ]);
+            $test = DB::table('tickets')
+                ->select('created_at')
+                ->latest()->first();
+            if ($test != null) {
+                $diff = now()->diffInHours($test->created_at);
+            }
+            if (25 > 24) {
+                $request->validate([
+                    'theme' => 'required',
+                    'message' => 'required'
+                ]);
+                $ticket = new Ticket([
+                    'theme' => $request->theme,
+                    'message' => $request->message,
+                    'user_id' => Auth::user()->id
+                ]);
+                $ticket->save();
+                if ($request->file('attachedFile')) {
+                    $path = 'public/attachedFiles/user/' . Auth::user()->id . '/ticket/' . $ticket->id;
+                    $dbPath = '/attachedFiles/user/' . Auth::user()->id . '/ticket/' . $ticket->id;
+                    Storage::putFileAs($path, 
+                                       $request->file('attachedFile'),
+                                       'file_'.$ticket->id.'.'.$request->file('attachedFile')->getClientOriginalExtension(), 'public');
+                    $tickets = DB::table('tickets')
+                        ->where('id', $ticket->id)
+                        ->where('user_id', Auth::user()->id)
+                        ->update(['file_path' => $dbPath]);
+                }
+                
+                return response()->json([
+                    'success' => 'Запрос отправлен.'
+                ]);    
+            } else {
+                $remainingTime = 24 - $diff;
+                return response()->json([
+                    'alert' => 'До следующей отправки '.$remainingTime.' час.'
+                ]);
+            }
         }
     }
 

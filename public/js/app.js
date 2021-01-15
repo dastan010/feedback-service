@@ -2057,6 +2057,7 @@ function AdminContainer() {
 
   var fetchUserTickets = function fetchUserTickets(id) {
     _requests__WEBPACK_IMPORTED_MODULE_2__.default.getUserTickets(id).then(function (res) {
+      setPropTicket('');
       setUserTickets(res.data.userTickets);
     });
   };
@@ -2105,7 +2106,14 @@ function AdminContainer() {
         onClick: function onClick() {
           setPropTicket([ticket.user_id, ticket.id, ticket.response]);
         }
-      }, ticket.response ? 'Редактировать ответ' : 'Ответить')));
+      }, ticket.response ? 'Редактировать ответ' : 'Ответить')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+        className: "btn btn-primary ".concat(ticket.file_path ? '' : 'hidden'),
+        onClick: function onClick() {
+          downloadFile(ticket.id, ticket.user_id);
+        }
+      }, "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+        className: "badge badge-warning customBadge ".concat(ticket.file_path ? 'hidden' : '')
+      }, "\u0411\u0435\u0437 \u0444\u0430\u0439\u043B\u0430")));
     });
   };
 
@@ -2116,6 +2124,17 @@ function AdminContainer() {
   var renderFromChild = function renderFromChild(id) {
     fetchUserTickets(id);
     renderUserTickets();
+  };
+
+  var downloadFile = function downloadFile(ticket_id, user_id) {
+    _requests__WEBPACK_IMPORTED_MODULE_2__.default.downloadFile(ticket_id, user_id).then(function (res) {
+      var url = window.URL.createObjectURL(new Blob([res.data]));
+      var link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file.docx');
+      document.body.appendChild(link);
+      link.click();
+    });
   };
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Container__WEBPACK_IMPORTED_MODULE_3__.default, {
@@ -2136,7 +2155,7 @@ function AdminContainer() {
     id: "inputGroupSelect01"
   }, renderUsers())), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("table", {
     className: "table table-striped mt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "ID."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Theme"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Message"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Response"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Mail"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Creation Time"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Actions"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, renderUserTickets())));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "ID."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Theme"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Message"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Response"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Mail"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Creation Time"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "Actions"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", null, "\u0424\u0430\u0439\u043B"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, renderUserTickets())));
 }
 
 document.getElementById('adminContainer') ? react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(AdminContainer, null), document.getElementById('adminContainer')) : console.log('The node isn\'t provided!');
@@ -2180,10 +2199,18 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 function Modal(props) {
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(''),
+  var textAreaInput = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createRef();
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(true),
       _useState2 = _slicedToArray(_useState, 2),
-      response = _useState2[0],
-      setResponse = _useState2[1];
+      disable = _useState2[0],
+      setDisable = _useState2[1];
+
+  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
+    if (props.data) {
+      textAreaInput.current.value = props.data[2];
+    }
+  });
 
   var onSendResponse = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -2195,14 +2222,13 @@ function Modal(props) {
               data = {
                 user_id: props.data[0],
                 ticket_id: props.data[1],
-                response: response,
-                myResponse: props.data[2]
+                response: textAreaInput.current.value
               };
               _context.prev = 1;
               _context.next = 4;
               return _requests__WEBPACK_IMPORTED_MODULE_2__.default.responseToTicket(data.ticket_id, data).then(function (res) {
                 props.parentCallback(res.data.user_id);
-                setResponse('');
+                textAreaInput.current.value = '';
               });
 
             case 4:
@@ -2226,6 +2252,11 @@ function Modal(props) {
       return _ref.apply(this, arguments);
     };
   }();
+
+  var changeValue = function changeValue(value) {
+    value ? setDisable(false) : setDisable(true);
+    textAreaInput.current.value = value;
+  };
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "modal fade",
@@ -2258,9 +2289,9 @@ function Modal(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", null, "Response"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("textarea", {
     className: "form-control",
     type: "text",
-    defaultValue: props.data !== null ? props.data[2] : response,
+    ref: textAreaInput,
     onChange: function onChange(e) {
-      return setResponse(e.target.value);
+      return changeValue(e.target.value);
     }
   })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "modal-footer"
@@ -2271,7 +2302,8 @@ function Modal(props) {
   }, "Close"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
     onClick: onSendResponse,
     type: "button",
-    className: "btn btn-primary"
+    className: "btn btn-primary",
+    disabled: disable
   }, "Save changes")))));
 }
 
@@ -2366,45 +2398,70 @@ function AddTicket() {
       _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(''),
       _useState6 = _slicedToArray(_useState5, 2),
       message = _useState6[0],
-      setMessage = _useState6[1];
+      setMessage = _useState6[1],
+      _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(null),
+      _useState8 = _slicedToArray(_useState7, 2),
+      file = _useState8[0],
+      setFile = _useState8[1],
+      _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(''),
+      _useState10 = _slicedToArray(_useState9, 2),
+      dataNotification = _useState10[0],
+      setDataNotification = _useState10[1];
 
   var onAddSubmit = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+      var formData;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               setLoading(true);
               _context.prev = 1;
-              _context.next = 4;
-              return _requests__WEBPACK_IMPORTED_MODULE_3__.default.createTicket({
-                theme: theme,
-                message: message
+              formData = new FormData();
+
+              if (!(theme && message)) {
+                _context.next = 12;
+                break;
+              }
+
+              formData.append('attachedFile', file);
+              formData.append('theme', theme);
+              formData.append('message', message);
+              _context.next = 9;
+              return _requests__WEBPACK_IMPORTED_MODULE_3__.default.createTicket(formData).then(function (res) {
+                res.data.alert ? setDataNotification(res.data.alert) : setDataNotification(res.data.success);
               });
 
-            case 4:
-              _context.next = 9;
-              break;
-
-            case 6:
-              _context.prev = 6;
-              _context.t0 = _context["catch"](1);
-              alert('Failed to add Ticket!');
-
             case 9:
-              _context.prev = 9;
-              setLoading(false);
               setTimeout(function () {
                 return history.push('/');
               }, 500);
-              return _context.finish(9);
+              _context.next = 13;
+              break;
+
+            case 12:
+              setDataNotification('Поля не должны быть пустыми!');
 
             case 13:
+              _context.next = 18;
+              break;
+
+            case 15:
+              _context.prev = 15;
+              _context.t0 = _context["catch"](1);
+              alert('Failed to add Ticket!');
+
+            case 18:
+              _context.prev = 18;
+              setLoading(false);
+              return _context.finish(18);
+
+            case 21:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[1, 6, 9, 13]]);
+      }, _callee, null, [[1, 15, 18, 21]]);
     }));
 
     return function onAddSubmit() {
@@ -2412,13 +2469,32 @@ function AddTicket() {
     };
   }();
 
+  function Notification(props) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+      className: "banner bg-warning ".concat(props.data ? '' : 'hidden')
+    }, props.data);
+  }
+
+  var onFileChange = function onFileChange(event) {
+    setFile(event.target.files[0]);
+    var extension = event.target.files[0].name.split('.').pop();
+
+    if (extension !== 'docx') {
+      alert('Файл должен быть формата docx!');
+      document.getElementById('file').value = '';
+    }
+  };
+
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(_Container__WEBPACK_IMPORTED_MODULE_2__.default, {
     title: "Add Ticket"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/",
     className: "btn btn-primary"
-  }, "Back"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("form", {
-    className: "mt-4"
+  }, "Back"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(Notification, {
+    data: dataNotification
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("form", {
+    className: "mt-4",
+    encType: "multipart/form-data"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", null, "Theme:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
@@ -2439,6 +2515,12 @@ function AddTicket() {
     onChange: function onChange(e) {
       return setMessage(e.target.value);
     }
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("h5", null, "\u0424\u0430\u0439\u043B \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0444\u043E\u0440\u043C\u0430\u0442\u0430 docx!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
+    id: "file",
+    type: "file",
+    onChange: onFileChange
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
@@ -2601,8 +2683,13 @@ var BASE_API_URL = 'http://localhost:8000',
   getAllTickets: function getAllTickets() {
     return axios.get("".concat(BASE_API_URL, "/tickets"));
   },
-  createTicket: function createTicket(ticket) {
-    return axios.post("".concat(BASE_API_URL, "/tickets"), ticket);
+  createTicket: function createTicket(formData) {
+    return axios.post("".concat(BASE_API_URL, "/tickets"), formData);
+  },
+  downloadFile: function downloadFile(ticket_id, user_id) {
+    return axios.get("".concat(ADMIN_BASE_API_URL, "/users/").concat(user_id, "/tickets/").concat(ticket_id, "/fileDownload"), {
+      responseType: 'blob'
+    });
   }
 });
 

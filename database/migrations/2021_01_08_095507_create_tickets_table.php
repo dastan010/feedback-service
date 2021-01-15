@@ -19,6 +19,7 @@ class CreateTicketsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('theme');
             $table->text('message');
+            $table->string('file_path')->nullable();
             $table->text('response')->nullable();
             $table->timestamps();
         });

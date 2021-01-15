@@ -28,7 +28,11 @@ class HomeController extends Controller
         if (!$user) {
             return view('auth.login');
         } else {
-            return view('user', ['user' => $user]);
+            if (Auth::user()->owner == 1) {
+                return redirect()->route('admin');
+            } else {
+                return view('user', ['user' => $user]);
+            }
         }
     } 
 }
