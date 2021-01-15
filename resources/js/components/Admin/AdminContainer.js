@@ -19,7 +19,7 @@ function AdminContainer() {
 
   const fetchUserTickets = id => {
     api.getUserTickets(id).then(res => {
-      console.log('From userTickets', res.data.userTickets);
+      setPropTicket('')
       setUserTickets(res.data.userTickets)
     })
   }

@@ -1,24 +1,33 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import api from '../../requests'
 
 function Modal(props) {
-  const [response, setResponse] = useState('')
+  let textAreaInput = React.createRef()
+  useEffect(() => {
+    if (props.data) {
+      textAreaInput.current.value = props.data[2]
+    }
+  })
   const onSendResponse = async() => {
     let data = {
       user_id: props.data[0],
       ticket_id: props.data[1],
-      response: response,
+      response: textAreaInput.current.value,
       myResponse: props.data[2]
     }
     try {
       await api.responseToTicket(data.ticket_id, data).then(res => {
         props.parentCallback(res.data.user_id);
-        setResponse('')
       })
     } catch(e) {
       alert(e)
     }
   }
+  
+  const changeValue = value => {
+    textAreaInput.current.value = value
+  }
+  
   return (
     <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div className="modal-dialog" role="document">
@@ -36,8 +45,8 @@ function Modal(props) {
                 <textarea 
                   className="form-control" 
                   type="text"
-                  defaultValue={props.data !== null ? props.data[2] : response}
-                  onChange={e => setResponse(e.target.value)}
+                  ref={textAreaInput}
+                  onChange={e => changeValue(e.target.value)}
                 />
               </div>
             </form>
