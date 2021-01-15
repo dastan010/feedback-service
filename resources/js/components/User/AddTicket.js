@@ -14,19 +14,23 @@ function AddTicket() {
     setLoading(true)
     try {
       const formData = new FormData()
-      formData.append('attachedFile', file)
-      formData.append('theme', theme)
-      formData.append('message', message) 
-      await api.createTicket(formData).then(res => {
-        res.data.alert 
-          ? setDataNotification(res.data.alert)
-          : setDataNotification(res.data.success)
-      })
+      if (theme && message) {
+        formData.append('attachedFile', file)
+        formData.append('theme', theme)
+        formData.append('message', message) 
+        await api.createTicket(formData).then(res => {
+          res.data.alert 
+            ? setDataNotification(res.data.alert)
+            : setDataNotification(res.data.success)
+        })
+        setTimeout(() => history.push('/'), 500)
+      } else {
+        setDataNotification('Поля не должны быть пустыми!')
+      }
     } catch(error) {
         alert('Failed to add Ticket!')
     } finally {
       setLoading(false)
-      setTimeout(() => history.push('/'), 1000)
     }
   }
 
@@ -74,6 +78,8 @@ function AddTicket() {
             onChange={e => setMessage(e.target.value)}
           />
         </div>
+        
+        <h5>Файл должен быть формата docx!</h5>
         <div className="form-group">
           <input id="file" type="file" onChange={onFileChange}/> 
         </div>

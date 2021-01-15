@@ -2183,11 +2183,29 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
 function Modal(props) {
   var textAreaInput = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createRef();
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(true),
+      _useState2 = _slicedToArray(_useState, 2),
+      disable = _useState2[0],
+      setDisable = _useState2[1];
+
   (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
     if (props.data) {
       textAreaInput.current.value = props.data[2];
@@ -2204,13 +2222,13 @@ function Modal(props) {
               data = {
                 user_id: props.data[0],
                 ticket_id: props.data[1],
-                response: textAreaInput.current.value,
-                myResponse: props.data[2]
+                response: textAreaInput.current.value
               };
               _context.prev = 1;
               _context.next = 4;
               return _requests__WEBPACK_IMPORTED_MODULE_2__.default.responseToTicket(data.ticket_id, data).then(function (res) {
                 props.parentCallback(res.data.user_id);
+                textAreaInput.current.value = '';
               });
 
             case 4:
@@ -2236,6 +2254,7 @@ function Modal(props) {
   }();
 
   var changeValue = function changeValue(value) {
+    value ? setDisable(false) : setDisable(true);
     textAreaInput.current.value = value;
   };
 
@@ -2283,7 +2302,8 @@ function Modal(props) {
   }, "Close"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
     onClick: onSendResponse,
     type: "button",
-    className: "btn btn-primary"
+    className: "btn btn-primary",
+    disabled: disable
   }, "Save changes")))));
 }
 
@@ -2398,37 +2418,50 @@ function AddTicket() {
               setLoading(true);
               _context.prev = 1;
               formData = new FormData();
+
+              if (!(theme && message)) {
+                _context.next = 12;
+                break;
+              }
+
               formData.append('attachedFile', file);
               formData.append('theme', theme);
               formData.append('message', message);
-              _context.next = 8;
+              _context.next = 9;
               return _requests__WEBPACK_IMPORTED_MODULE_3__.default.createTicket(formData).then(function (res) {
                 res.data.alert ? setDataNotification(res.data.alert) : setDataNotification(res.data.success);
               });
 
-            case 8:
+            case 9:
+              setTimeout(function () {
+                return history.push('/');
+              }, 500);
               _context.next = 13;
               break;
 
-            case 10:
-              _context.prev = 10;
+            case 12:
+              setDataNotification('Поля не должны быть пустыми!');
+
+            case 13:
+              _context.next = 18;
+              break;
+
+            case 15:
+              _context.prev = 15;
               _context.t0 = _context["catch"](1);
               alert('Failed to add Ticket!');
 
-            case 13:
-              _context.prev = 13;
+            case 18:
+              _context.prev = 18;
               setLoading(false);
-              setTimeout(function () {
-                return history.push('/');
-              }, 1000);
-              return _context.finish(13);
+              return _context.finish(18);
 
-            case 17:
+            case 21:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[1, 10, 13, 17]]);
+      }, _callee, null, [[1, 15, 18, 21]]);
     }));
 
     return function onAddSubmit() {
@@ -2482,7 +2515,7 @@ function AddTicket() {
     onChange: function onChange(e) {
       return setMessage(e.target.value);
     }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("h5", null, "\u0424\u0430\u0439\u043B \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0444\u043E\u0440\u043C\u0430\u0442\u0430 docx!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
     id: "file",
