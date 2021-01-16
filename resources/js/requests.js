@@ -1,6 +1,6 @@
 const axios = window.axios
-const BASE_API_URL = 'http://localhost:8000',
-      ADMIN_BASE_API_URL = 'http://localhost:8000/admin'
+const BASE_API_URL = 'http://127.0.0.1:8000',
+      ADMIN_BASE_API_URL = 'http://127.0.0.1:8000/admin'
 export default {
   getUsers: () =>
     axios.get(`${ADMIN_BASE_API_URL}/users`),
