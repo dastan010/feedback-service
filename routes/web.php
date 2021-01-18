@@ -16,13 +16,18 @@ use Illuminate\Http\Request;
 */
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('user');
-Route::get('/admin', function(){
-  return view('admin');
-})->name('admin');
-Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'index']);
-Route::get('/admin/users/getTickets/{id}', [App\Http\Controllers\AdminController::class, 'getUserTickets']);
-Route::get('/admin/users/{user_id}/tickets/{ticket_id}/fileDownload', [App\Http\Controllers\AdminController::class, 'downloadFile']);
-Route::put('/admin/users/ticketResponse/{id}', [App\Http\Controllers\AdminController::class, 'update']);
+
+
+Route::prefix('admin')->group(function() {
+  Route::get('/', function(){
+    return view('admin');
+  })->name('admin');
+  
+  Route::get('/users', [App\Http\Controllers\AdminController::class, 'index']);
+  Route::get('/users/getTickets/{id}', [App\Http\Controllers\AdminController::class, 'getUserTickets']);
+  Route::get('/users/{user_id}/tickets/{ticket_id}/fileDownload', [App\Http\Controllers\AdminController::class, 'downloadFile']);
+  Route::put('/users/ticketResponse/{id}', [App\Http\Controllers\AdminController::class, 'update']);
+});
 
 Route::get('/add', [App\Http\Controllers\HomeController::class, 'index']);
 Route::resource('/tickets', TicketController::class);
