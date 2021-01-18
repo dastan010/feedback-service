@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Auth;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Storage;
-use Response;
 
 class AdminController extends Controller
 {
@@ -18,11 +17,9 @@ class AdminController extends Controller
      */
     public function index()
     {
-
         $users = DB::table('users')->where('owner', 0)->get();
         return response()->json([
-            'users' => $users,
-            'token' => csrf_token() 
+            'users' => $users
         ]);
     }
 
@@ -46,6 +43,7 @@ class AdminController extends Controller
           'userTickets' => $userTickets
         ]);
     }
+    
     public function downloadFile($user_id, $ticket_id) {
         $db_file_path = DB::table('tickets')
             ->select('file_path')
@@ -54,54 +52,11 @@ class AdminController extends Controller
             ->first();
         
         $fileName = 'file_'.$ticket_id.'.docx';    
-        $filePath = public_path().'/storage/'.$db_file_path->file_path.'/'.$fileName;
+        $filePath = public_path('/storage/'.$db_file_path->file_path.'/'.$fileName);
         $headers = array(
             'Content-Type: application/docx'
         );
         return response()->download($filePath, $fileName, $headers);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -130,16 +85,5 @@ class AdminController extends Controller
             'user_id' => $user_id,
             'response' => $tickets
         ]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }
