@@ -22,8 +22,10 @@ function AddTicket() {
           res.data.alert 
             ? setDataNotification(res.data.alert)
             : setDataNotification(res.data.success)
+          if (res.data.status === 'success') {
+            setTimeout(() => history.push('/'), 500)
+          }
         })
-        setTimeout(() => history.push('/'), 500)
       } else {
         setDataNotification('Поля не должны быть пустыми!')
       }
@@ -44,8 +46,8 @@ function AddTicket() {
   const onFileChange = event => { 
     setFile(event.target.files[0]) 
     let extension = event.target.files[0].name.split('.').pop()
-    if (extension !== 'docx') {
-      alert('Файл должен быть формата docx!');
+    if (extension !== 'pdf') {
+      alert('Файл должен быть формата pdf!');
       document.getElementById('file').value = ''
     }
   }
@@ -79,7 +81,7 @@ function AddTicket() {
           />
         </div>
         
-        <h5>Файл должен быть формата docx!</h5>
+        <h5>Файл должен быть формата pdf</h5>
         <div className="form-group">
           <input id="file" type="file" onChange={onFileChange}/> 
         </div>

@@ -40,10 +40,12 @@ class TicketController extends Controller
             $test = DB::table('tickets')
                 ->select('created_at')
                 ->latest()->first();
+            
             if ($test != null) {
                 $diff = now()->diffInHours($test->created_at);
             }
-            if (25 > 24) {
+            
+            if ($diff > 24) {
                 $request->validate([
                     'theme' => 'required',
                     'message' => 'required'
@@ -54,6 +56,7 @@ class TicketController extends Controller
                     'user_id' => Auth::user()->id
                 ]);
                 $ticket->save();
+                
                 if ($request->file('attachedFile')) {
                     $path = 'public/attachedFiles/user/' . Auth::user()->id . '/ticket/' . $ticket->id;
                     $dbPath = '/attachedFiles/user/' . Auth::user()->id . '/ticket/' . $ticket->id;
@@ -67,12 +70,14 @@ class TicketController extends Controller
                 }
                 
                 return response()->json([
-                    'success' => 'Запрос отправлен.'
+                    'success' => 'Запрос отправлен.',
+                    'status' => 'success'
                 ]);    
             } else {
                 $remainingTime = 24 - $diff;
                 return response()->json([
-                    'alert' => 'До следующей отправки '.$remainingTime.' час.'
+                    'alert' => 'До следующей отправки '.$remainingTime.' час.',
+                    'status' => 'pending'
                 ]);
             }
         }

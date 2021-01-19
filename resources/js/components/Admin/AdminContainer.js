@@ -108,12 +108,17 @@ function AdminContainer() {
 
   const downloadFile = (ticket_id, user_id) => {
     api.downloadFile(ticket_id, user_id).then(res => {
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'file.docx'); 
-      document.body.appendChild(link);
-      link.click();
+      const file = new Blob([res.data], {type: 'application/pdf'})
+      const fileUrl = URL.createObjectURL(file)
+      window.open(fileUrl)
+      // For download file
+      // const url = window.URL.createObjectURL(new Blob([res.data]));
+      // const link = document.createElement('a');
+      // link.href = url;
+      // window.open(link.href, '_blank');
+      // link.setAttribute('download', 'file.docx'); 
+      // document.body.appendChild(link);
+      // link.click();
     })
   }
   

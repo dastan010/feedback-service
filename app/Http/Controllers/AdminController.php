@@ -51,12 +51,9 @@ class AdminController extends Controller
             ->where('user_id', $user_id)
             ->first();
         
-        $fileName = 'file_'.$ticket_id.'.docx';    
+        $fileName = 'file_'.$ticket_id.'.pdf';    
         $filePath = public_path('/storage/'.$db_file_path->file_path.'/'.$fileName);
-        $headers = array(
-            'Content-Type: application/docx'
-        );
-        return response()->download($filePath, $fileName, $headers);
+        return response()->file($filePath);
     }
 
     /**
