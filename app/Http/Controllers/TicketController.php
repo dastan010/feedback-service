@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\Ticket as TicketResource;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 use Auth;
+use Debugbar;
 
 class TicketController extends Controller
 {
@@ -44,29 +43,25 @@ class TicketController extends Controller
             if ($test != null) {
                 $diff = now()->diffInHours($test->created_at);
             }
-            
-            if ($diff > 24) {
+
+            $sendTime = $diff > 24;
+
+            if ($sendTime) {
                 $request->validate([
                     'theme' => 'required',
                     'message' => 'required'
                 ]);
+                
                 $ticket = new Ticket([
-                    'theme' => $request->theme,
+                    'theme'   => $request->theme,
                     'message' => $request->message,
-                    'user_id' => Auth::user()->id
+                    'user_id' => $user->id
                 ]);
+                
                 $ticket->save();
                 
                 if ($request->file('attachedFile')) {
-                    $path = 'public/attachedFiles/user/' . Auth::user()->id . '/ticket/' . $ticket->id;
-                    $dbPath = '/attachedFiles/user/' . Auth::user()->id . '/ticket/' . $ticket->id;
-                    Storage::putFileAs($path, 
-                                       $request->file('attachedFile'),
-                                       'file_'.$ticket->id.'.'.$request->file('attachedFile')->getClientOriginalExtension(), 'public');
-                    $tickets = DB::table('tickets')
-                        ->where('id', $ticket->id)
-                        ->where('user_id', Auth::user()->id)
-                        ->update(['file_path' => $dbPath]);
+                    HelperFunctions::processFile($request->file('attachedFile'), $ticket, $user->id);
                 }
                 
                 return response()->json([
@@ -82,6 +77,8 @@ class TicketController extends Controller
             }
         }
     }
+
+    
 
     /**
      * Display the specified resource.
