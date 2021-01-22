@@ -2128,12 +2128,18 @@ function AdminContainer() {
 
   var downloadFile = function downloadFile(ticket_id, user_id) {
     _requests__WEBPACK_IMPORTED_MODULE_2__.default.downloadFile(ticket_id, user_id).then(function (res) {
-      var url = window.URL.createObjectURL(new Blob([res.data]));
-      var link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'file.docx');
-      document.body.appendChild(link);
-      link.click();
+      var file = new Blob([res.data], {
+        type: 'application/pdf'
+      });
+      var fileUrl = URL.createObjectURL(file);
+      window.open(fileUrl); // For download file
+      // const url = window.URL.createObjectURL(new Blob([res.data]));
+      // const link = document.createElement('a');
+      // link.href = url;
+      // window.open(link.href, '_blank');
+      // link.setAttribute('download', 'file.docx'); 
+      // document.body.appendChild(link);
+      // link.click();
     });
   };
 
@@ -2325,7 +2331,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
 
-
 function Container(_ref) {
   var title = _ref.title,
       children = _ref.children;
@@ -2420,7 +2425,7 @@ function AddTicket() {
               formData = new FormData();
 
               if (!(theme && message)) {
-                _context.next = 12;
+                _context.next = 11;
                 break;
               }
 
@@ -2430,38 +2435,41 @@ function AddTicket() {
               _context.next = 9;
               return _requests__WEBPACK_IMPORTED_MODULE_3__.default.createTicket(formData).then(function (res) {
                 res.data.alert ? setDataNotification(res.data.alert) : setDataNotification(res.data.success);
+
+                if (res.data.status === 'success') {
+                  setTimeout(function () {
+                    return history.push('/');
+                  }, 500);
+                }
               });
 
             case 9:
-              setTimeout(function () {
-                return history.push('/');
-              }, 500);
-              _context.next = 13;
+              _context.next = 12;
               break;
 
-            case 12:
+            case 11:
               setDataNotification('Поля не должны быть пустыми!');
 
-            case 13:
-              _context.next = 18;
+            case 12:
+              _context.next = 17;
               break;
 
-            case 15:
-              _context.prev = 15;
+            case 14:
+              _context.prev = 14;
               _context.t0 = _context["catch"](1);
               alert('Failed to add Ticket!');
 
-            case 18:
-              _context.prev = 18;
+            case 17:
+              _context.prev = 17;
               setLoading(false);
-              return _context.finish(18);
+              return _context.finish(17);
 
-            case 21:
+            case 20:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[1, 15, 18, 21]]);
+      }, _callee, null, [[1, 14, 17, 20]]);
     }));
 
     return function onAddSubmit() {
@@ -2479,8 +2487,8 @@ function AddTicket() {
     setFile(event.target.files[0]);
     var extension = event.target.files[0].name.split('.').pop();
 
-    if (extension !== 'docx') {
-      alert('Файл должен быть формата docx!');
+    if (extension !== 'pdf') {
+      alert('Файл должен быть формата pdf!');
       document.getElementById('file').value = '';
     }
   };
@@ -2515,7 +2523,7 @@ function AddTicket() {
     onChange: function onChange(e) {
       return setMessage(e.target.value);
     }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("h5", null, "\u0424\u0430\u0439\u043B \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0444\u043E\u0440\u043C\u0430\u0442\u0430 docx!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("h5", null, "\u0424\u0430\u0439\u043B \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0444\u043E\u0440\u043C\u0430\u0442\u0430 pdf"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
     id: "file",
