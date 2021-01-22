@@ -51,12 +51,11 @@ class TicketController extends Controller
                     'theme' => 'required',
                     'message' => 'required'
                 ]);
-                
-                $ticket = new Ticket([
-                    'theme'   => $request->theme,
-                    'message' => $request->message,
-                    'user_id' => $user->id
-                ]);
+
+                $ticket = new Ticket;
+                $ticket->theme = $request->theme;
+                $ticket->message = $request->message;
+                $ticket->user_id = $user->id;    
                 
                 $ticket->save();
                 
