@@ -19,7 +19,8 @@ class AdminController extends Controller
     {
         $users = DB::table('users')->where('owner', 0)->get();
         return response()->json([
-            'users' => $users
+            'users' => $users,
+            'token' => csrf_token()
         ]);
     }
 
