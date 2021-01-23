@@ -4,9 +4,7 @@ import api from '../../requests'
 function Modal(props) {
   let textAreaInput = React.createRef()
   useEffect(() => {
-    if (props.data) {
-      textAreaInput.current.value = props.data[2]
-    }
+    props.data ? textAreaInput.current.value = props.data[2] : ''
   })
   const onSendResponse = async() => {
     if (textAreaInput.current.value) {
