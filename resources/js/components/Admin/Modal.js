@@ -3,30 +3,33 @@ import api from '../../requests'
 
 function Modal(props) {
   let textAreaInput = React.createRef()
-  let [disable, setDisable] = useState(true)
   useEffect(() => {
     if (props.data) {
       textAreaInput.current.value = props.data[2]
     }
   })
   const onSendResponse = async() => {
-    let data = {
-      user_id: props.data[0],
-      ticket_id: props.data[1],
-      response: textAreaInput.current.value
-    }
-    try {
-      await api.responseToTicket(data.ticket_id, data).then(res => {
-        props.parentCallback(res.data.user_id)
-        textAreaInput.current.value = ''
-      })
-    } catch(e) {
-      alert(e)
+    if (textAreaInput.current.value) {
+      let data = {
+        user_id: props.data[0],
+        ticket_id: props.data[1],
+        response: textAreaInput.current.value
+      }
+      
+      try {
+        await api.responseToTicket(data.ticket_id, data).then(res => {
+          props.parentCallback(res.data.user_id)
+          textAreaInput.current.value = ''
+        })
+      } catch(e) {
+        alert(e)
+      }
+    } else {
+      alert('Введите поля')
     }
   }
   
   const changeValue = value => {
-    value ? setDisable(false) : setDisable(true)
     textAreaInput.current.value = value
   }
   
@@ -55,7 +58,7 @@ function Modal(props) {
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button onClick={onSendResponse} type="button" className="btn btn-primary" disabled={disable}>Save changes</button>
+            <button onClick={onSendResponse} type="button" className="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>
