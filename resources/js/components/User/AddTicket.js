@@ -51,6 +51,7 @@ function AddTicket() {
       document.getElementById('file').value = ''
     }
   }
+  
   return (
     <Container title="Add Ticket">
       <Link to="/" className="btn btn-primary">Back</Link>

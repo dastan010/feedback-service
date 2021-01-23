@@ -2189,29 +2189,11 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 
 function Modal(props) {
   var textAreaInput = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createRef();
-
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(true),
-      _useState2 = _slicedToArray(_useState, 2),
-      disable = _useState2[0],
-      setDisable = _useState2[1];
-
   (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
     if (props.data) {
       textAreaInput.current.value = props.data[2];
@@ -2225,33 +2207,45 @@ function Modal(props) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              if (!textAreaInput.current.value) {
+                _context.next = 12;
+                break;
+              }
+
               data = {
                 user_id: props.data[0],
                 ticket_id: props.data[1],
                 response: textAreaInput.current.value
               };
-              _context.prev = 1;
-              _context.next = 4;
+              _context.prev = 2;
+              _context.next = 5;
               return _requests__WEBPACK_IMPORTED_MODULE_2__.default.responseToTicket(data.ticket_id, data).then(function (res) {
                 props.parentCallback(res.data.user_id);
                 textAreaInput.current.value = '';
               });
 
-            case 4:
-              _context.next = 9;
+            case 5:
+              _context.next = 10;
               break;
 
-            case 6:
-              _context.prev = 6;
-              _context.t0 = _context["catch"](1);
+            case 7:
+              _context.prev = 7;
+              _context.t0 = _context["catch"](2);
               alert(_context.t0);
 
-            case 9:
+            case 10:
+              _context.next = 13;
+              break;
+
+            case 12:
+              alert('Введите поля');
+
+            case 13:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[1, 6]]);
+      }, _callee, null, [[2, 7]]);
     }));
 
     return function onSendResponse() {
@@ -2260,7 +2254,6 @@ function Modal(props) {
   }();
 
   var changeValue = function changeValue(value) {
-    value ? setDisable(false) : setDisable(true);
     textAreaInput.current.value = value;
   };
 
@@ -2308,8 +2301,7 @@ function Modal(props) {
   }, "Close"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
     onClick: onSendResponse,
     type: "button",
-    className: "btn btn-primary",
-    disabled: disable
+    className: "btn btn-primary"
   }, "Save changes")))));
 }
 
