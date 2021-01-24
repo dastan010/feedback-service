@@ -8,8 +8,8 @@ export default {
     axios.get(`${ADMIN_BASE_API_URL}/users/getTickets/${user_id}`),
   responseToTicket: (ticket_id, data) =>
     axios.put(`${ADMIN_BASE_API_URL}/users/ticketResponse/${ticket_id}`, data),
-  getAllTickets: () =>
-    axios.get(`${BASE_API_URL}/tickets`),
+  getAllTickets: pageNumber =>
+    axios.get(`${BASE_API_URL}/tickets?page=${pageNumber}`),
   createTicket: formData =>
     axios.post(`${BASE_API_URL}/tickets`, formData),
   downloadFile: (ticket_id, user_id) =>
