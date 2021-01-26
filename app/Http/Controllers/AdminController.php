@@ -38,7 +38,7 @@ class AdminController extends Controller
                      'tickets.message', 
                      'tickets.response',
                      'tickets.created_at'
-                    )->where('tickets.user_id', $id)->get();
+                    )->where('tickets.user_id', $id)->paginate(5);
         
         return response()->json([
           'userTickets' => $userTickets

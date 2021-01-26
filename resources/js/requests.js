@@ -4,8 +4,8 @@ const BASE_API_URL = 'http://localhost:8000',
 export default {
   getUsers: () =>
     axios.get(`${ADMIN_BASE_API_URL}/users`),
-  getUserTickets: user_id => 
-    axios.get(`${ADMIN_BASE_API_URL}/users/getTickets/${user_id}`),
+  getUserTickets: (user_id, pageNumber) => 
+    axios.get(`${ADMIN_BASE_API_URL}/users/getTickets/${user_id}?page=${pageNumber}`),
   responseToTicket: (ticket_id, data) =>
     axios.put(`${ADMIN_BASE_API_URL}/users/ticketResponse/${ticket_id}`, data),
   getAllTickets: pageNumber =>
