@@ -14,7 +14,6 @@ class Ticket extends JsonResource
      */
     public function toArray($request)
     {
-        // 'user_id' => $this->user_id,
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,

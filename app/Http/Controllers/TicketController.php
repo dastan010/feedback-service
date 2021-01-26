@@ -17,9 +17,10 @@ class TicketController extends Controller
      * @return \Illuminate\Http\Response
      */
     public $preserveKeys = true;
+    
     public function index()
     {
-        $tickets = DB::table('tickets')->where('user_id', Auth::user()->id)->get();
+        $tickets = DB::table('tickets')->where('user_id', Auth::user()->id)->paginate(5);
         
         return response()->json([
             'tickets' => $tickets 
@@ -39,45 +40,75 @@ class TicketController extends Controller
             $test = DB::table('tickets')
                 ->select('created_at')
                 ->latest()->first();
-            
-            if ($test != null) {
+            $diff = null;
+            $recordExists = $test != null;
+            if ($recordExists) {
                 $diff = now()->diffInHours($test->created_at);
-            }
-
-            $sendTime = $diff > 24;
-
-            if ($sendTime) {
-                $request->validate([
-                    'theme' => 'required',
-                    'message' => 'required'
-                ]);
-
-                $ticket = new Ticket;
-                $ticket->theme = $request->theme;
-                $ticket->message = $request->message;
-                $ticket->user_id = $user->id;    
-                
-                $ticket->save();
-                
-                if ($request->file('attachedFile')) {
-                    HelperFunctions::processFile($request->file('attachedFile'), $ticket, $user->id);
+                $sendTime = $diff > 24;
+                if ($sendTime) {
+                    $isProcessed = $this->processRequest($request, $user);
+                    if ($isProcessed) {
+                        return response()->json([
+                            'success' => 'Запрос отправлен.',
+                            'status' => 'success'
+                        ]);
+                    }
+                } else {
+                    $remainingTime = 24 - $diff;
+                    return response()->json([
+                        'alert' => 'До следующей отправки '.$remainingTime.' час.',
+                        'status' => 'pending'
+                    ]);
                 }
-                
-                return response()->json([
-                    'success' => 'Запрос отправлен.',
-                    'status' => 'success'
-                ]);    
             } else {
-                $remainingTime = 24 - $diff;
-                return response()->json([
-                    'alert' => 'До следующей отправки '.$remainingTime.' час.',
-                    'status' => 'pending'
-                ]);
+                $isProcessed = $this->processRequest($request, $user);
+                if ($isProcessed) {
+                    return response()->json([
+                        'success' => 'Запрос отправлен.',
+                        'status' => 'success'
+                    ]);
+                }
             }
         }
     }
 
-    
+    public function processRequest($request, $user) {
+        $request->validate([
+            'theme' => 'required',
+            'message' => 'required'
+        ]);
+
+        $ticket = new Ticket;
+        $ticket->theme = $request->theme;
+        $ticket->message = $request->message;
+        $ticket->user_id = $user->id;    
+        
+        $ticket->save();
+        
+        if ($request->file('attachedFile')) {
+            $this->processFile($request->file('attachedFile'), $ticket, $user->id);
+        }
+        
+        if ($ticket) {
+            return true;    
+
+        } else {
+            return false;
+        }
+    }
+
+    public function processFile($file, $ticket, $id) {
+        $path = 'public/attachedFiles/user/' . $id . '/ticket/' . $ticket->id;
+        $dbPath = '/attachedFiles/user/' . $id . '/ticket/' . $ticket->id;
+        Storage::putFileAs($path, 
+                           $file,
+                           'file_'.$ticket->id.'.'.$file->getClientOriginalExtension(), 
+                           'public');
+        $tickets = DB::table('tickets')
+            ->where('id', $ticket->id)
+            ->where('user_id', $id)
+            ->update(['file_path' => $dbPath]);
+    }
 
     /**
      * Display the specified resource.
