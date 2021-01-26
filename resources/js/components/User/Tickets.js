@@ -68,7 +68,7 @@ function Tickets() {
                         <tbody>
                             {renderTickets()}
                         </tbody>
-                        </table>
+                    </table>
                         <div className="d-flex justify-content-center">
                             <Pagination 
                                 totalItemsCount={total} 
