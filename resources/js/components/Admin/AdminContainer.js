@@ -53,6 +53,24 @@ function AdminContainer() {
     ))
   }
 
+  const changeOption = e =>  {
+    fetchUserTickets(e.target.value)  
+    setUserId(e.target.value)
+  }
+
+  const renderFromChild = id => {
+    fetchUserTickets(id)
+    renderUserTickets()
+  }
+
+  const downloadFile = (ticket_id, user_id) => {
+    api.downloadFile(ticket_id, user_id).then(res => {
+      const file = new Blob([res.data], {type: 'application/pdf'})
+      const fileUrl = URL.createObjectURL(file)
+      window.open(fileUrl)
+    })
+  }
+
   const renderTable = () => {
     if (userTickets) {
       const {total, per_page, current_page} = userTickets
@@ -142,24 +160,6 @@ function AdminContainer() {
     }
   }
 
-  const changeOption = e =>  {
-    fetchUserTickets(e.target.value)  
-    setUserId(e.target.value)
-  }
-
-  const renderFromChild = id => {
-    fetchUserTickets(id)
-    renderUserTickets()
-  }
-
-  const downloadFile = (ticket_id, user_id) => {
-    api.downloadFile(ticket_id, user_id).then(res => {
-      const file = new Blob([res.data], {type: 'application/pdf'})
-      const fileUrl = URL.createObjectURL(file)
-      window.open(fileUrl)
-    })
-  }
-  
   return (
     <Container title="Admin">
       <Modal data={propTicket} parentCallback={renderFromChild}/>

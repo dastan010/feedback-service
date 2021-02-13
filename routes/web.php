@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Ticket\TicketController;
+use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\HomeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,7 +17,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('user');
+Route::get('/', [HomeController::class, 'index'])->name('user');
 
 
 Route::prefix('admin')->group(function() {
@@ -23,12 +25,12 @@ Route::prefix('admin')->group(function() {
     return view('admin');
   })->name('admin');
   
-  Route::get('/users', [App\Http\Controllers\AdminController::class, 'index']);
-  Route::get('/users/getTickets/{id}', [App\Http\Controllers\AdminController::class, 'getUserTickets']);
-  Route::get('/users/{user_id}/tickets/{ticket_id}/fileDownload', [App\Http\Controllers\AdminController::class, 'downloadFile']);
-  Route::put('/users/ticketResponse/{id}', [App\Http\Controllers\AdminController::class, 'update']);
+  Route::get('/users', [AdminController::class, 'index']);
+  Route::get('/users/getTickets/{id}', [AdminController::class, 'getUserTickets']);
+  Route::get('/users/{user_id}/tickets/{ticket_id}/fileDownload', [AdminController::class, 'downloadFile']);
+  Route::put('/users/ticketResponse/{id}', [AdminController::class, 'update']);
 });
 
-Route::get('/add', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/add', [TicketController::class, 'store']);
 Route::resource('/tickets', TicketController::class);
 Auth::routes();
